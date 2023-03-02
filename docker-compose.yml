@@ -1,26 +1,31 @@
 version: '3'
 
 services:
-  app:
+  api:
     build: .
-    images: "app:project-spark"
     ports:
       - "80:80"
+    container_name: fastapi-application
     depends_on:
       - sqlite3
-    # environment:
-    #   - MYSQL_HOST=db
-    #   - MYSQL_USER=root
-    #   - MYSQL_PASSWORD=example_password
-    #   - MYSQL_DB=example_db
-    command: uvicorn main:app --host 0.0.0.0 --port 80
+    restart: "no"
+# services:
+#   app:
+#     build: .
+#       dockerfile:"Dockerfile.spark"
+#     images: "project-spark:${TAG}"
+#     ports:
+#       - "80:80"
+#     depends_on:
+#       - sqlite3
+#     command: uvicorn main:app --host 0.0.0.0 --port 80
 
-  sqlite3:
-    image: nouchka/sqlite3:latest
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./db/:/root/db/
+#   sqlite3:
+#     image: nouchka/sqlite3:latest
+#     stdin_open: true
+#     tty: true
+#     volumes:
+#       - ./db/:/root/db/
   
   # db:
   #   image: mysql:latest

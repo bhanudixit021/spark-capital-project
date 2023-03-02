@@ -14,3 +14,7 @@ start-spark-capital:
 
 up:
 	export TAG=${TAG} && docker-compose -f docker-compose.yml up -d
+
+docker-run:
+	docker run -d -p 80:80 project-spark_new 
+
