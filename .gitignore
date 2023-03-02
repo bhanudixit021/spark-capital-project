@@ -57,46 +57,13 @@ test_*.txt
 /.DS_Store
 .DS_Store
 .idea/
-static/
-media/
-newrelic.ini
 
 #Selenium files
 chromedriver
 chromedriver_mac64/
 
 
-# node
-node_modules/
-assets/*
-assets/*.js
-
-assets/frontend/*.html
-assets/frontend/*.json
-
-assets/frontend/*.map
-assets/frontend/bundle.js
-assets/frontend/*.bundle.js
-assets/frontend/*.hot-update.js
-assets/frontend/*.hot-update.js.map
-
-# bower packages
-cnext_backend/assets-src/vendor/
-.sass-cache/
-todo.txt
-*.rdb
-*.vscode
-*.idea
-/newrelic.ini
-*.ini
-*.package-lock.json
-
 #Remove env
 .env
 /.env
 
-#next js specific
-.next
-/package-lock.json
-
-./deploy/nginx.conf
