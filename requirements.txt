@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+sqlalchemy
+bs4
+requests
+selenium
+lxml
