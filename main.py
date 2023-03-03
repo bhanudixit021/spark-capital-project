@@ -5,6 +5,7 @@ from database import Base, engine, SessionLocal
 from sqlalchemy.orm import Session
 from data_extract import DataExtract
 from datetime import datetime
+import re
 
 
 Base.metadata.create_all(engine)
@@ -22,10 +23,10 @@ def get_session(): # to allow us to access the database session
 app = FastAPI()
 
 
-@app.get("/items")
-def getItems(session:Session=Depends(get_session)):
-    items = session.query(models.Item).all()
-    return items
+# @app.get("/items")
+# def getItems(session:Session=Depends(get_session)):
+#     items = session.query(models.Item).all()
+#     return items
 
 
 @app.get('/users')
@@ -34,10 +35,10 @@ def allusers(session:Session=Depends(get_session)):
     return usersObject
 
 
-@app.get("/items{id}")
-def getItem(id:int,session:Session=Depends(get_session)):
-    item = session.query(models.Item).get(id)
-    return item
+# @app.get("/items{id}")
+# def getItem(id:int,session:Session=Depends(get_session)):
+#     item = session.query(models.Item).get(id)
+#     return item
 
 
 @app.get('/users/{int}')
@@ -46,10 +47,10 @@ def getuser(id:int,session:Session=Depends(get_session)):
     return usersObject
 
 
-@app.get(('/data'))
-async def getData(session:Session=Depends(get_session)):
-    dataItem = session.query(models.BseData).all()
-    return dataItem
+# @app.get(('/data'))
+# async def getData(session:Session=Depends(get_session)):
+#     dataItem = session.query(models.BseData).all()
+#     return dataItem
 
 
 
@@ -68,7 +69,7 @@ async def extract_data(base_url:str,session:Session=Depends(get_session)):
                 client_name = data['client_name'],
                 deal_type = data['deal_type'],
                 quantity = data['quantity'],
-                price = data['price']
+                price = float(re.sub(',','',data['price']))
             )
             session.add(dataObject)
             session.commit()
@@ -77,13 +78,13 @@ async def extract_data(base_url:str,session:Session=Depends(get_session)):
         return message
 
 
-@app.post("/items")
-def addItem(item:schemas.Item,session:Session=Depends(get_session)):
-    item = models.Item(task = item.task)
-    session.add(item)
-    session.commit()
-    session.refresh(item)
-    return item
+# @app.post("/items")
+# def addItem(item:schemas.Item,session:Session=Depends(get_session)):
+#     item = models.Item(task = item.task)
+#     session.add(item)
+#     session.commit()
+#     session.refresh(item)
+#     return item
 
 
 @app.post('/users')
@@ -95,12 +96,12 @@ def addusers(user:schemas.Users,session:Session=Depends(get_session)):
     return usersObject
 
 
-@app.put("/items/{id}")
-def updateItem(id:int,item:schemas.Item,session:Session=Depends(get_session)):
-    itemObject = session.query(models.Item).get(id)
-    itemObject.task = item.task
-    session.commit()
-    return itemObject
+# @app.put("/items/{id}")
+# def updateItem(id:int,item:schemas.Item,session:Session=Depends(get_session)):
+#     itemObject = session.query(models.Item).get(id)
+#     itemObject.task = item.task
+#     session.commit()
+#     return itemObject
 
 
 @app.put('/users/{int}')
@@ -112,17 +113,17 @@ def updateusers(id:int,user:schemas.Users,session:Session=Depends(get_session)):
     return usersObject
 
 
-@app.delete("/items/{int}")
-def deleteItem(id:int,item:schemas.Item,session:Session=Depends(get_session)):
-    item = session.query(models.Item).get(id)
-    session.delete(item)
-    session.commit()
-    session.close()
-    return "Item as deleted"
+# @app.delete("/items/{int}")
+# def deleteItem(id:int,item:schemas.Item,session:Session=Depends(get_session)):
+#     item = session.query(models.Item).get(id)
+#     session.delete(item)
+#     session.commit()
+#     session.close()
+#     return "Item as deleted"
 
 
 @app.delete('/users/{int}')
-def deleteusers(id:int,user:schemas.Users,session:Session=Depends(get_session)):
+def deleteusers(id:int,session:Session=Depends(get_session)):
     usersObject = session.query(models.Users).get(id)
     session.delete(usersObject)
     session.commit()
