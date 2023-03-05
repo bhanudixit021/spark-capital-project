@@ -1,11 +1,11 @@
-from fastapi import FastAPI,Body,Depends
+from fastapi import FastAPI,Body,Depends,HTTPException
 import schemas
 import models
 from database import Base, engine, SessionLocal
 from sqlalchemy.orm import Session
 from data_extract import DataExtract
-from datetime import datetime
-import re
+from selenium import webdriver
+from shutil import which
 
 
 Base.metadata.create_all(engine)
@@ -23,11 +23,26 @@ def get_session(): # to allow us to access the database session
 app = FastAPI()
 
 
+
+
+@app.get('/ed/{str}')
+async def extract_data(base_url:str=None,session:Session=Depends(get_session)):
+    if base_url:
+        context = extract_session._collect_data(base_url=base_url,session=session)
+        message = 'data is not updated'
+        if context['flag']:
+            message = 'DataBase updated with fresh values'
+        return message
+
+
 # @app.get("/items")
 # def getItems(session:Session=Depends(get_session)):
 #     items = session.query(models.Item).all()
 #     return items
 
+@app.get('/')
+def home():
+    return 'hello world'
 
 @app.get('/users')
 def allusers(session:Session=Depends(get_session)):
@@ -47,35 +62,11 @@ def getuser(id:int,session:Session=Depends(get_session)):
     return usersObject
 
 
-# @app.get(('/data'))
-# async def getData(session:Session=Depends(get_session)):
-#     dataItem = session.query(models.BseData).all()
-#     return dataItem
+@app.get(('/data'))
+async def getData(session:Session=Depends(get_session)):
+    dataItem = session.query(models.BseData).all()
+    return dataItem
 
-
-
-@app.get('/ed/{str}')
-async def extract_data(base_url:str,session:Session=Depends(get_session)):
-    context = extract_session._collect_data(base_url=base_url)
-    message = 'data is not updated'
-    if context['flag']:
-        message = 'DataBase updated with new values'
-        complete_data = context['base_data_collection']
-        for data in complete_data:
-            dataObject = models.BseData(
-                deal_date = datetime.strptime(data['date'],'%m/%d/%Y'),
-                security_code = data['security_code'],
-                security_name = data['security_name'],
-                client_name = data['client_name'],
-                deal_type = data['deal_type'],
-                quantity = data['quantity'],
-                price = float(re.sub(',','',data['price']))
-            )
-            session.add(dataObject)
-            session.commit()
-            session.refresh(dataObject)
-        
-        return message
 
 
 # @app.post("/items")

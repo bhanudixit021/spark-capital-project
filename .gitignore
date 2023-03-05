@@ -59,7 +59,7 @@ test_*.txt
 .idea/
 
 #Selenium files
-chromedriver
+# chromedriver
 chromedriver_mac64/
 
 
